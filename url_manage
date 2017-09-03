@@ -1,0 +1,31 @@
+#encoding:utf-8
+
+class UrlManage(object):
+    # 管理两个列表  set
+    def __init__(self):
+        self.new_urls = set()
+        self.old_urls = set()
+    # 为什么需要两个new_url
+    # 第一个只是处理单个链接，链接有效加入set集合
+    # 第二个，对新的urls集合一个一个处理（调用第一个函数）
+    def add_new_url(self, url):
+        if url is None:
+            return
+        if url not in self.new_urls and url not in self.old_urls:
+            self.new_urls.add(url)
+
+    def add_new_urls(self, urls):
+        if urls is None or len(urls) == 0:
+            return
+        for url in urls:
+            self.add_new_url(url)
+    # 弹出新列表的顶部元素
+    # 并将该元素分配给old
+    def get_new_url(self):
+        new_url = self.new_urls.pop()
+        self.old_urls.add(new_url)
+        return new_url
+
+    def has_new_url(self):
+        return len(self.new_urls) != 0
+
