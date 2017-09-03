@@ -1,0 +1,48 @@
+#!/home/pengwei/anaconda2/bin/python
+#encoding:utf-8
+import url_manage, html_down, html_parser, html_output
+#import sys
+
+
+class SpiderMain(object):
+    def __init__(self):
+        self.urls = url_manage.UrlManage()
+        self.down = html_down.HtmlDown()
+        self.parser = html_parser.HtmlParser()
+        self.output = html_output.HtmlOutput()
+
+    def craw(self, ro_url):
+        count = 1
+        # 首先获取根元素
+        self.urls.add_new_url(ro_url)
+        # 当链接列表中含有链接，进入
+        while self.urls.has_new_url():
+            # 异常处理
+            try:
+                # 获取链接
+                new_url = self.urls.get_new_url()
+                print 'craw %d %s'% (count, new_url)
+                # 下载
+                html_cnt = self.down.down(new_url)
+                # 解析，得到更多链接，数据集（标题，简介）
+                new_urls, new_data = self.parser.parser(new_url, html_cnt)
+                # 将新的链接加入
+                self.urls.add_new_urls(new_urls)
+                # 收集数据
+                self.output.collect_data(new_data)
+                if count == 100:
+                    break
+                count = count + 1
+            except:
+                print 'error'
+        # 生成html文件
+        self.output.output_html()
+
+def main():
+    #sys.setrecursionlimit(100)
+    root_url = 'https://baike.baidu.com/item/Python/407313?fr=aladdin'
+    obj_spider = SpiderMain()
+    obj_spider.craw(root_url)
+
+if __name__ == '__main__':
+    main()
