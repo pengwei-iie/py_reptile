@@ -1,0 +1,15 @@
+#encoding:utf-8
+
+import urllib2
+
+
+class HtmlDown(object):
+    def down(self, url):
+        if url is None:
+            return None
+        response = urllib2.urlopen(url)
+        # getcode()为200说明接收正确
+        if response.getcode() != 200:
+            return None
+        # 返回接收到的html内容
+        return response.read()
